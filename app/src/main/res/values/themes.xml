@@ -1,0 +1,25 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="Base.Theme.GoOgle" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <!-- Customize your light theme here. -->
+        <item name="colorPrimary">@color/my_light_primary</item>
+    </style>
+
+    <!-- You can define your custom color in res/values/colors.xml -->
+    <color name="my_light_primary">#00796b</color>
+
+    <style name="Theme.GoOgle" parent="Theme.MaterialComponents.Light.DarkActionBar" >
+        <item name="colorPrimary">@android:color/white</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorAccent">@color/cardview_light_background</item>
+    </style>
+
+    <style name="chips">
+    <item name="android:textSize"> 15sp </item>
+    <item name="android:letterSpacing"> 0.02 </item>
+    <item name="android:textColor"> #000 </item>
+    <item name="fontFamily"> @font/montserrat </item>
+    <item name="backgroundTint"> #fff </item>
+    </style>
+    </resources>

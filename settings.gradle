@@ -1,0 +1,33 @@
+
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url 'https://jitpack.io' }
+        maven {
+            url "https://dl.bintary.com/wotomas/maven"
+        }
+        maven {
+            url "https://maven.google.com"
+        }
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url 'https://jitpack.io' }
+        maven {
+            url "https://dl.bintary.com/wotomas/maven"
+        }
+        maven {
+            url "https://maven.google.com"
+        }
+    }
+}
+
+rootProject.name = "GOOGLEassis"
+include ':app'
