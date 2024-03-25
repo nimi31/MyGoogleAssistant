@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.database.Cursor
 import android.graphics.Bitmap
@@ -36,9 +38,11 @@ import com.ml.quaterion.text2summary.Text2Summary
 import com.theartofdev.edmodo.cropper.CropImage
 import java.io.File
 import java.io.IOException
+import java.net.URLEncoder
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.regex.Pattern
 
 
 @Suppress("DEPRECATION", "CAST_NEVER_SUCCEEDS")
@@ -87,7 +91,51 @@ class AssistantFunctions {
             val time = format.format(calendar.time)
             speak("The Time is $time", textToSpeech, assistantViewModel, keeper)
         }
+        fun sendWhatsAppMessage(activity: Activity, context: Context, textToSpeech: TextToSpeech, assistantViewModel: AssistantViewModel, keeper: String) {
+            val phoneNumber = extractPhoneNumber(keeper)
+            val message = extractMessage(keeper)
 
+            if (phoneNumber != null && phoneNumber.isNotEmpty()) {
+                // Format the phone number for WhatsApp
+                val whatsappNumber = "+$phoneNumber"
+
+                // Create the intent to open WhatsApp with the provided phone number and message
+                val uri = Uri.parse("https://wa.me/$whatsappNumber/?text=${Uri.encode(message)}")
+                val intent = Intent(Intent.ACTION_VIEW, uri)
+
+                // Verify that WhatsApp is installed on the device
+                intent.`package` = "com.whatsapp"
+
+                try {
+                    // Start the WhatsApp activity with the intent
+                    activity.startActivity(intent)
+                } catch (e: ActivityNotFoundException) {
+                    // Handle if WhatsApp is not installed
+                    speak("WhatsApp is not installed on your device.", textToSpeech, assistantViewModel, keeper)
+                }
+            } else {
+                speak("Please provide a valid phone number.", textToSpeech, assistantViewModel, keeper)
+            }
+        }
+
+        private fun extractPhoneNumber(keeper: String): String? {
+            val matcher = Pattern.compile("\\d+").matcher(keeper)
+            var phoneNumber = ""
+            while (matcher.find()) {
+                phoneNumber += matcher.group()
+            }
+            return phoneNumber
+        }
+
+        private fun extractMessage(keeper: String): String {
+            // Extract the message after "message" or similar keywords
+            val messageIndex = keeper.indexOf("message")
+            return if (messageIndex != -1 && messageIndex + 7 < keeper.length) {
+                keeper.substring(messageIndex + 7).trim()
+            } else {
+                "This is a test message from my Google Assistant app."
+            }
+        }
         fun openFacebook(activity: Activity) {
             val intent = activity.packageManager.getLaunchIntentForPackage("com.facebook.katana")
             intent.let { activity.startActivity(it) }
@@ -169,6 +217,33 @@ class AssistantFunctions {
             }
         }
 
+        const val REQUEST_IMAGE_CAPTURE = 1
+
+        fun takeSelfie(activity: Activity, context: Context, textToSpeech: TextToSpeech, assistantViewModel: AssistantViewModel, keeper: String) {
+            if (ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.CAMERA
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // Permission not granted, request it from the user
+                ActivityCompat.requestPermissions(
+                    activity,
+                    arrayOf(Manifest.permission.CAMERA),
+                    REQUEST_IMAGE_CAPTURE
+                )
+            } else {
+                // Permission granted, proceed with taking the selfie
+                val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                if (cameraIntent.resolveActivity(activity.packageManager) != null) {
+                    // Specify that the front camera should be used
+                    cameraIntent.putExtra("android.intent.extras.CAMERA_FACING", android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT)
+                    activity.startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE)
+                } else {
+                    // Handle if no camera app is available
+                    speak("No camera app found on your device", textToSpeech, assistantViewModel, keeper)
+                }
+            }
+        }
 
         fun shareATextMessage(activity: Activity, context: Context, textToSpeech: TextToSpeech, assistantViewModel: AssistantViewModel, keeper: String) {
             if (ContextCompat.checkSelfPermission(
