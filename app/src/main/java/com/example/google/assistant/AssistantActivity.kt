@@ -74,6 +74,8 @@ import com.example.google.functions.AssistantFunctions.Companion.turnOnBluetooth
 import com.example.google.functions.AssistantFunctions.Companion.turnOnFlash
 import com.example.google.functions.AssistantFunctions.Companion.animationTime
 import com.example.google.functions.AssistantFunctions.Companion.dips
+import com.example.google.functions.AssistantFunctions.Companion.sendWhatsAppMessage
+import com.example.google.functions.AssistantFunctions.Companion.takeSelfie
 import com.example.google.functions.GoogleLensActivity
 import com.example.google.utils.UiUtils.*
 import com.kwabenaberko.openweathermaplib.implementation.OpenWeatherMapHelper
@@ -218,6 +220,12 @@ class AssistantActivity : AppCompatActivity() {
                             keeper.contains("time") -> getTime(textToSpeech, assistantViewModel, keeper)
                             keeper.contains("dial") -> makeAPhoneCall(this@AssistantActivity, applicationContext, textToSpeech, assistantViewModel, keeper)
                             keeper.contains("send sms") || keeper.contains("send SMS") -> sendSMS(this@AssistantActivity, applicationContext, textToSpeech, assistantViewModel, keeper)
+                            keeper.contains("send WhatsApp message") || keeper.contains("send message on whatsapp") -> sendWhatsAppMessage(this@AssistantActivity, applicationContext, textToSpeech, assistantViewModel, keeper)
+
+                            keeper.contains("take selfie") -> takeSelfie(this@AssistantActivity, applicationContext, textToSpeech, assistantViewModel, keeper)
+
+
+
                             keeper.contains("read my last sms") || keeper.contains("read my last SMS") || keeper.contains("read my SMS") -> readSMS(this@AssistantActivity, applicationContext, textToSpeech, assistantViewModel, keeper)
                             keeper.contains("open Gmail") || keeper.contains("Gmail") ||keeper.contains("gmail") ||keeper.contains("mail") -> openGmail(this@AssistantActivity)
                             keeper.contains("open Maps") || keeper.contains("open maps")  || keeper.contains("maps")-> openMaps(this@AssistantActivity)
@@ -264,6 +272,7 @@ class AssistantActivity : AppCompatActivity() {
                             else -> speak("Please try another comment like  what is your name , call someone , read my sms , open google lens , explore", textToSpeech, assistantViewModel, keeper)
 
                         }
+
 
                     }
 
